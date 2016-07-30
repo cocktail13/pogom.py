@@ -1,12 +1,10 @@
 from .utils import get_pokemon_name
 from pogom.utils import get_args
 from datetime import datetime
+import psycopg2
 import random
 
 args = get_args()
-conn = psycopg2.connect(dbname="pokemon_go", user="pokemon_go_role", password=args.pokel_pass, host="127.0.0.1")
-conn.autocommit = True
-cursor = conn.cursor()
 #temporarily disabling because -o and -i is removed from 51f651228c00a96b86f5c38d1a2d53b32e5d9862
 #IGNORE = None
 #ONLY = None
@@ -15,6 +13,9 @@ cursor = conn.cursor()
 #elif args.only:
 #    ONLY = [i.lower().strip() for i in args.only.split(',')]
 
+conn = psycopg2.connect(dbname="pokemon_go", user="pokemon_go_role", password=args.pokel_pass, host="127.0.0.1")
+conn.autocommit = True
+cursor = conn.cursor()
 
 def printPokemon(id,lat,lng,itime):
     if args.display_in_console:
@@ -32,7 +33,6 @@ def printPokemon(id,lat,lng,itime):
             print "======================================\n Name: %s\n Coord: (%f,%f)\n ID: %s \n Remaining Time: %s\n======================================" % (
                 pokemon_name.encode('utf-8'),lat,lng,pokemon_id,str(timeLeft))
 
-
 def logPokemonDb(p):
     pokemon_id = int(p['pokemon_data']['pokemon_id'])
     pokemon_name = get_pokemon_name(str(pokemon_id)).lower()
@@ -48,10 +48,11 @@ def logPokemonDb(p):
 
     longitude = float(p['longitude'])
     latitude = float(p['latitude'])
-    longitude_jittered = longitude + (random.gauss(0, 0.3) - 0.15) * 0.0005
-    latitude_jittered = latitude + (random.gauss(0, 0.3) - 0.15) * 0.0005
+    longitude_jittered = longitude + random.gauss(0, 0.3) * 0.0005
+    latitude_jittered = latitude + random.gauss(0, 0.3) * 0.0005
 
-    query =  "INSERT INTO spotted_pokemon (name, encounter_id, last_modified_time, time_until_hidden_ms, hidden_time_unix_s, hidden_time_utc, spawnpoint_id, longitude, latitude, pokemon_id, longitude_jittered, latitude_jittered) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+    query =  "INSERT INTO spotted_pokemon (name, encounter_id, last_modified_time, time_until_hidden_ms, hidden_time_unix_s, hidden_time_utc, spawnpoint_id, longitude, latitude, pokemon_id, longitude_jittered, latitude_jittered) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (encounter_id) DO UPDATE SET last_modified_time = EXCLUDED.last_modified_time, time_until_hidden_ms = EXCLUDED.time_until_hidden_ms, hidden_time_unix_s = EXCLUDED.hidden_time_unix_s, hidden_time_utc = EXCLUDED.hidden_time_utc;"
+
     data = (pokemon_name, encounter_id, last_modified_time, time_until_hidden_ms, hidden_time_unix_s, hidden_time_utc, spawnpoint_id, longitude, latitude, pokemon_id, longitude_jittered, latitude_jittered)
 
     cursor.execute(query, data)
