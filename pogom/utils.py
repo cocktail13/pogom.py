@@ -21,13 +21,11 @@ def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
 
-
 def verify_config_file_exists(filename):
     fullpath = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(fullpath):
         log.info("Could not find " + filename + ", copying default")
         shutil.copy2(fullpath + '.example', fullpath)
-
 
 def get_args():
     # fuck PEP8
@@ -102,7 +100,7 @@ def get_args():
     parser.add_argument('--db-host', help='IP or hostname for the database')
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to',
                         nargs='*', default=False, dest='webhooks')
-    parser.add_argument('--pokel-pass', help='Password for Pokelizer database')
+    parser.add_argument('--pokel-pass', help='Password for Pokelize database')
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
