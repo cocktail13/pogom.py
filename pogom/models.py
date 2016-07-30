@@ -241,16 +241,16 @@ def parse_map(map_dict, iteration_num, step, step_location):
                 'disappear_time': d_t
             }
 
-                webhook_data = {
-                    'encounter_id': b64encode(str(p['encounter_id'])),
-                    'spawnpoint_id': p['spawnpoint_id'],
-                    'pokemon_id': p['pokemon_data']['pokemon_id'],
-                    'latitude': p['latitude'],
-                    'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple())
-                }
+            webhook_data = {
+                'encounter_id': b64encode(str(p['encounter_id'])),
+                'spawnpoint_id': p['spawnpoint_id'],
+                'pokemon_id': p['pokemon_data']['pokemon_id'],
+                'latitude': p['latitude'],
+                'longitude': p['longitude'],
+                'disappear_time': time.mktime(d_t.timetuple())
+            }
 
-                send_to_webhook('pokemon', webhook_data)
+            send_to_webhook('pokemon', webhook_data)
 
         if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):
