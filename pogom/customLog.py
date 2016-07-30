@@ -1,7 +1,6 @@
 from .utils import get_pokemon_name
 from pogom.utils import get_args
 from datetime import datetime
-import psycopg2
 import random
 
 args = get_args()
