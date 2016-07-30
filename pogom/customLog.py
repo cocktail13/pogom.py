@@ -4,6 +4,10 @@ from datetime import datetime
 import psycopg2
 import random
 
+sudo apt-get install python-psycopg2
+sudo apt-get install libpq-dev
+sudo pip install psycopg2
+
 args = get_args()
 #temporarily disabling because -o and -i is removed from 51f651228c00a96b86f5c38d1a2d53b32e5d9862
 #IGNORE = None
